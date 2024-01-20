@@ -1,0 +1,39 @@
+version: "3"
+services:
+  snapserver:
+    image: jaedb/snapserver
+    container_name: snapserver
+    depends_on:
+      - music
+    network_mode: host
+    #ports:
+    #  - 1704:1704
+    #  - 1705:1705
+    #  - 1780:1780
+    volumes:
+      - ./tmp/snapserver:/tmp
+      #- /tmp:/tmp
+      - ./snapserver/snapserver.conf:/etc/snapserver.conf
+      - ./snapserver/snapserver.json:/root/.config/snapserver/server.json
+
+
+  music:
+    container_name: "music"
+    user: 1000:1000
+    build:
+      context: .
+      dockerfile: ./navidrome-build/Dockerfile.navidrome.v2
+    expose:
+      - 4533
+    ports:
+      - "4534:4533/tcp"
+    group_add:
+      - "29" # audio group ID (gid)
+    restart: "unless-stopped"
+    volumes:
+      - ./musicserver:/data
+      - /mnt/media/Media/Music:/music:ro
+      - ./tmp/snapserver/snapfifo:/tmp/snapfifo
+    devices:
+      - /dev/snd:/dev/snd
+      

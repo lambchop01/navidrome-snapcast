@@ -1,0 +1,28 @@
+On Pi Zero...
+
+  Install Dietpi
+  
+  #install snapclient and audio utilities
+  sudo apt install snapclient avahi-daemon alsa-utils
+  
+  #edit snapclient config
+  sudo nano /etc/default/snapclient
+    START_SNAPCLIENT=true
+    SNAPCLIENT_OPTS="-h 192.168.2.18"
+
+  Voila!  That should do it
+
+  #troubleshooting
+  #snapclient user: "_snapclient" needs access to "audio" group
+  #add user dietpi to audio group
+  sudo usermod -aG audio diepti
+  
+  #to see what groups you belong to
+  sudo groups <username>
+  
+
+
+Any Web browser
+  
+  Go to 192.168.2.18:1780
+  hit play in the top corner

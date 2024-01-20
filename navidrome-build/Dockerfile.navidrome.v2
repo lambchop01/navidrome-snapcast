@@ -1,0 +1,22 @@
+FROM debian:bookworm-slim
+
+ENV VERSION=0.50.2
+
+RUN apt update && apt upgrade && apt install vim ffmpeg mpv alsa-utils wget nano -y
+
+RUN adduser --uid 1000 --no-create-home kevin && usermod -aG audio,video kevin
+
+RUN install -d -o kevin -g kevin /opt/navidrome && install -d -o kevin -g kevin /var/lib/navidrome
+
+RUN wget https://github.com/navidrome/navidrome/releases/download/v${VERSION}/navidrome_${VERSION}_linux_amd64.tar.gz -O Navidrome.tar.gz && tar -xvzf Navidrome.tar.gz -C /opt/navidrome/ && chown -R 1000:1000 /opt/navidrome
+
+USER 1000:1000
+
+WORKDIR /var/lib/navidrome
+
+COPY ./navidrome-build/navidrome.toml /var/lib/navidrome/navidrome.toml
+COPY ./navidrome-build/asound.conf /etc/asound.conf
+
+EXPOSE 4533
+
+ENTRYPOINT (/opt/navidrome/navidrome --configfile "/var/lib/navidrome/navidrome.toml")
